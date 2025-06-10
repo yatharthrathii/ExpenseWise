@@ -4,9 +4,9 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
-}
-    from "firebase/auth";
+    updateProfile,
+    sendEmailVerification
+} from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -25,8 +25,12 @@ export const auth = getAuth(app);
 export const SignUpWithEmail = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("User signed up:", userCredential.user.email);
-        return userCredential.user;
+        const user = userCredential.user;
+
+        await sendEmailVerification(user);
+        console.log("User signed up and verification email sent:", user.email);
+
+        return user;
     } catch (error) {
         console.error("Error signing up:", error.message);
         throw error;
@@ -36,8 +40,10 @@ export const SignUpWithEmail = async (email, password) => {
 export const LoginWithEmail = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log("User logged in:", userCredential.user.email);
-        return userCredential.user;
+        const user = userCredential.user;
+
+        console.log("User logged in:", user.email);
+        return user;
     } catch (error) {
         console.error("Error logging in:", error.message);
         throw error;
@@ -60,6 +66,19 @@ export const UpdateUserProfile = async (user, displayName, photoURL) => {
         console.log("Profile updated successfully!");
     } catch (error) {
         console.error("Error updating profile:", error.message);
+        throw error;
+    }
+};
+
+export const sendVerificationEmailToUser = async (user) => {
+    try {
+        if (!user) {
+            throw new Error("No authenticated user to send verification email.");
+        }
+        await sendEmailVerification(user);
+        console.log("Verification email sent to:", user.email);
+    } catch (error) {
+        console.error("Error sending verification email:", error.message);
         throw error;
     }
 };

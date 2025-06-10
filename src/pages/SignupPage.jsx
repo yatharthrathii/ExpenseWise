@@ -24,7 +24,7 @@ const SignupPage = () => {
         }
 
         await SignUpWithEmail(inputVal, passwordVal);
-        navigate("/complete-profile")
+        navigate("/")
 
         setInputVal("");
         setPasswordVal("");
