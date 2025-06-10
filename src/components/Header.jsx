@@ -111,7 +111,7 @@ const Header = () => {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <nav className="md:hidden bg-violet-700 pb-4 pt-2 mt-2 rounded-b-lg shadow-inner">
+                <nav className="md:hidden bg-violet-700 pb-4 pt-2 mt-2 rounded-lg shadow-inner">
                     <div className="flex flex-col items-center space-y-3">
                         <button
                             onClick={() => handleProtectedNavigation('/dashboard')}
@@ -137,7 +137,7 @@ const Header = () => {
                                 </button>
                                 <button
                                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
-                                    className="w-full text-center py-2 bg-white text-violet-600 rounded-md font-semibold hover:bg-indigo-100 transition-all duration-300"
+                                    className="w-11/12 text-center py-2 bg-white text-violet-600 rounded-md font-semibold hover:bg-indigo-100 transition-all duration-300"
                                 >
                                     Logout
                                 </button>
@@ -145,7 +145,7 @@ const Header = () => {
                         ) : (
                             <button
                                 onClick={() => { navigate('/login'); setIsMenuOpen(false); }}
-                                className="w-full text-center py-2 bg-white text-violet-600 rounded-md font-semibold hover:bg-indigo-100 transition-all duration-300"
+                                className="w-11/12 text-center py-2 bg-white text-violet-600 rounded-md font-semibold hover:bg-indigo-100 transition-all duration-300"
                             >
                                 Login
                             </button>

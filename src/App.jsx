@@ -5,6 +5,8 @@ import SignupPage from "./pages/SignupPage"
 import Header from './components/Header'
 import CompleteProfile from './pages/CompleteProfile'
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
+import Dashboard from './pages/Dashboard'
+import Expenses from './pages/Expenses'
 
 function App() {
 
@@ -12,15 +14,15 @@ function App() {
     <>
       <Router>
         <Header />
-        <div className="pt-20">
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/complete-profile" element={<CompleteProfile />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/my-expenses' element={<Expenses />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
+        </Routes>
       </Router>
     </>
   )

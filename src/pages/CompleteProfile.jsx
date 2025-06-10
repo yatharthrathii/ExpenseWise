@@ -149,7 +149,7 @@ const CompleteProfile = () => {
     }
 
     return (
-        <div className="min-h-screen mt-8 md:mt-4 flex items-center justify-center bg-slate-50 px-4">
+        <div className="min-h-screen mt-12 md:mt-4 flex items-center justify-center bg-slate-50 px-4">
             <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-slate-200">
                 <h1 className="text-3xl font-semibold text-center text-slate-800 mb-6">
                     Complete Your Profile 📝
