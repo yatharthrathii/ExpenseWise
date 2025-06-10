@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { SignUpWithEmail } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
     const [inputVal, setInputVal] = useState("");
     const [passwordVal, setPasswordVal] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate()
 
     const handleFormSignUp = async (e) => {
         e.preventDefault();
@@ -22,6 +24,7 @@ const SignupPage = () => {
         }
 
         await SignUpWithEmail(inputVal, passwordVal);
+        navigate("/complete-profile")
 
         setInputVal("");
         setPasswordVal("");
@@ -71,7 +74,9 @@ const SignupPage = () => {
                 </form>
 
                 <div className="mt-6 text-center text-sm">
-                    <button className="text-slate-600 hover:underline">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-slate-600 hover:underline">
                         Already have an account? <span className="text-violet-600 font-medium">Login</span>
                     </button>
                 </div>

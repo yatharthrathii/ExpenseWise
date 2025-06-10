@@ -1,43 +1,37 @@
 import { useState, useEffect } from "react";
-import { getAuth, updateProfile, onAuthStateChanged } from "firebase/auth";
+import { updateProfile, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebase"; // Import the auth object
+import { auth } from "../firebase";
 
 const CompleteProfile = () => {
     const [fullName, setFullName] = useState("");
     const [photoURL, setPhotoURL] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [currentUser, setCurrentUser] = useState(null); // State to hold the current logged-in user
-    const [loading, setLoading] = useState(true); // State to manage loading status
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in
                 setCurrentUser(user);
-                // Pre-fill form fields if display name or photo URL already exist
                 setFullName(user.displayName || "");
                 setPhotoURL(user.photoURL || "");
-                setError(""); // Clear any previous error
+                setError("");
             } else {
-                // User is signed out
                 setCurrentUser(null);
                 setError("You must be logged in to complete your profile.");
-                // Optionally redirect to login if no user is found
-                // navigate('/login');
             }
-            setLoading(false); // Authentication state has been determined
+            setLoading(false);
         });
 
-        // Cleanup subscription on unmount
         return () => unsubscribe();
-    }, []); // Run once on component mount
+    }, []);
 
     const handleUpdate = async () => {
-        setError(""); // Clear previous errors
-        setSuccess(""); // Clear previous success messages
+        setError("");
+        setSuccess("");
 
         if (!currentUser) {
             setError("No active user found to update profile.");
@@ -52,11 +46,9 @@ const CompleteProfile = () => {
         try {
             await updateProfile(currentUser, {
                 displayName: fullName,
-                photoURL: photoURL, // photoURL can be an empty string if not provided
+                photoURL: photoURL,
             });
             setSuccess("Profile updated successfully!");
-            // The user object held by Firebase Auth is automatically updated.
-            // onAuthStateChanged will likely fire again, updating the 'currentUser' state.
             setTimeout(() => navigate("/dashboard"), 1500);
         } catch (err) {
             setError(`Failed to update profile: ${err.message}`);
@@ -107,7 +99,7 @@ const CompleteProfile = () => {
                     <button
                         onClick={handleUpdate}
                         className="bg-violet-600 text-white px-4 py-2 rounded-xl hover:bg-violet-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={!currentUser} // Disable update button if no user is logged in
+                        disabled={!currentUser}
                     >
                         Update
                     </button>
