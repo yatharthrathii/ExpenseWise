@@ -1,12 +1,24 @@
 import { useState } from "react";
-import { LoginWithEmail } from "../firebase";
+import { LoginWithEmail, auth } from "../firebase"; // Import auth for potential onAuthStateChanged if needed
 import { useNavigate } from "react-router-dom";
+// import { onAuthStateChanged } from "firebase/auth"; // Import onAuthStateChanged
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("yatharthmaheshwari01@gmail.com");
+    const [password, setPassword] = useState("123456789");
     const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    // Optional: You might want to check if a user is already logged in
+    // and redirect them if they try to access the login page again.
+    // useEffect(() => {
+    //     const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //         if (user) {
+    //             navigate('/main'); // Redirect to main if already logged in
+    //         }
+    //     });
+    //     return () => unsubscribe();
+    // }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -17,11 +29,20 @@ const LoginPage = () => {
             return;
         }
 
-        await LoginWithEmail(email, password);
-        navigate('/main')
+        try {
+            await LoginWithEmail(email, password);
+            // After successful login, navigate to the main page
+            navigate('/main');
+        } catch (error) {
+            // Firebase errors have a 'code' and 'message' property
+            setErrorMessage(error.message || "Login failed. Please check your credentials.");
+            console.error("Login error:", error);
+        }
 
-        setEmail("");
-        setPassword("");
+        // It's generally better to clear these only after successful login
+        // or if you want to force re-entry after a failed attempt.
+        // setEmail("");
+        // setPassword("");
     };
 
     return (
@@ -71,7 +92,11 @@ const LoginPage = () => {
                 </form>
 
                 <div className="mt-5 text-center text-sm">
-                    <button className="text-slate-600 hover:underline">
+                    {/* Assuming you have a route for signup, e.g., /signup */}
+                    <button
+                        className="text-slate-600 hover:underline"
+                        onClick={() => navigate('/signup')} // Add navigation to signup page
+                    >
                         Don’t have an account?{" "}
                         <span className="text-violet-600 font-medium">Sign up</span>
                     </button>
