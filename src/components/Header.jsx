@@ -15,7 +15,9 @@ const Header = () => {
             setCurrentUser(user);
             setLoading(false);
 
-            if (!user && location.pathname !== '/login' && location.pathname !== '/signup') {
+            const publicPaths = ['/login', '/signup', '/', '/forgot-password'];
+
+            if (!user && !publicPaths.includes(location.pathname)) {
                 navigate('/login');
             }
         });

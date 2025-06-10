@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import Header from './components/Header'
 import CompleteProfile from './pages/CompleteProfile'
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 
 function App() {
 
@@ -11,11 +12,15 @@ function App() {
     <>
       <Router>
         <Header />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/complete-profile" element={<CompleteProfile />} />
-        </Routes>
+        <div className="pt-20">
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+          </Routes>
+        </div>
       </Router>
     </>
   )

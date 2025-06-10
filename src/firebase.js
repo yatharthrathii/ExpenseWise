@@ -5,8 +5,10 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     updateProfile,
-    sendEmailVerification
-} from "firebase/auth";
+    sendEmailVerification,
+    sendPasswordResetEmail
+}
+    from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -19,17 +21,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const analytics = getAnalytics(app); // eslint-disable-line
 export const auth = getAuth(app);
 
 export const SignUpWithEmail = async (email, password) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
         await sendEmailVerification(user);
         console.log("User signed up and verification email sent:", user.email);
-
         return user;
     } catch (error) {
         console.error("Error signing up:", error.message);
@@ -41,7 +41,6 @@ export const LoginWithEmail = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
         console.log("User logged in:", user.email);
         return user;
     } catch (error) {
@@ -79,6 +78,16 @@ export const sendVerificationEmailToUser = async (user) => {
         console.log("Verification email sent to:", user.email);
     } catch (error) {
         console.error("Error sending verification email:", error.message);
+        throw error;
+    }
+};
+
+export const sendPasswordReset = async (email) => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+        console.log("Password reset email sent to:", email);
+    } catch (error) {
+        console.error("Error sending password reset email:", error.message);
         throw error;
     }
 };

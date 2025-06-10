@@ -7,12 +7,13 @@ const LoginPage = () => {
     const [email, setEmail] = useState("yatharthmaheshwari01@gmail.com");
     const [password, setPassword] = useState("123456789");
     const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                navigate('/main');
+                navigate('/');
             }
         });
         return () => unsubscribe();
@@ -27,16 +28,32 @@ const LoginPage = () => {
             return;
         }
 
+        setLoading(true);
         try {
             await LoginWithEmail(email, password);
             navigate('/main');
         } catch (error) {
-            setErrorMessage(error.message || "Login failed. Please check your credentials.");
+            let displayMessage = "Login failed. Please check your credentials.";
+            switch (error.code) {
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    displayMessage = "Invalid email or password.";
+                    break;
+                case 'auth/invalid-email':
+                    displayMessage = "Invalid email address format.";
+                    break;
+                case 'auth/too-many-requests':
+                    displayMessage = "Too many failed login attempts. Please try again later.";
+                    break;
+                default:
+                    displayMessage = error.message || displayMessage;
+            }
+            setErrorMessage(displayMessage);
             console.error("Login error:", error);
+        } finally {
+            setLoading(false);
         }
 
-        setEmail("");
-        setPassword("");
     };
 
     return (
@@ -53,6 +70,7 @@ const LoginPage = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                     <input
                         className="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
@@ -60,6 +78,7 @@ const LoginPage = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
 
                     {errorMessage && (
@@ -68,9 +87,11 @@ const LoginPage = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 rounded-xl transition-all duration-200 shadow-sm"
+                        className={`w-full bg-violet-600 text-white font-medium py-2 rounded-xl transition-all duration-200 shadow-sm
+                                    ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-violet-700'}`}
+                        disabled={loading}
                     >
-                        Login
+                        {loading ? 'Logging in...' : 'Login'}
                     </button>
 
                     {/* 👉 Forgot Password Button */}
@@ -78,7 +99,7 @@ const LoginPage = () => {
                         <button
                             type="button"
                             className="text-sm text-violet-600 hover:underline hover:text-violet-700 transition"
-                            onClick={() => alert("Redirect to forgot password page")}
+                            onClick={() => navigate('/forgot-password')}
                         >
                             Forgot your password?
                         </button>
@@ -88,7 +109,7 @@ const LoginPage = () => {
                 <div className="mt-5 text-center text-sm">
                     <button
                         className="text-slate-600 hover:underline"
-                        onClick={() => navigate('/signup')} 
+                        onClick={() => navigate('/signup')}
                     >
                         Don’t have an account?{" "}
                         <span className="text-violet-600 font-medium">Sign up</span>
