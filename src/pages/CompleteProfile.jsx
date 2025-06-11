@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { updateProfile, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, sendVerificationEmailToUser } from "../firebase";
+import { sendVerificationEmailToUser } from "../firebase/auth";
+import { auth } from "../firebase/firebase";
 
 const CompleteProfile = () => {
     const [fullName, setFullName] = useState("");

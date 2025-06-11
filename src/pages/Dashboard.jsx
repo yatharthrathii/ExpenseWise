@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { addExpense } from "../firebase/expenses";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
     const [inputVal, setInputVal] = useState("");
@@ -11,7 +9,6 @@ const Dashboard = () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-
         if (!inputVal.trim() || !amountVal.trim()) {
             toast.error("Please fill all fields!");
             return;
@@ -21,19 +18,17 @@ const Dashboard = () => {
             title: inputVal,
             amount: Number(amountVal),
             category,
-            timestamp: new Date()
         };
 
         try {
-            await addDoc(collection(db, "expenses"), expenseData);
-            toast.success("Expense added successfully 🎉");
-
+            await addExpense(expenseData);
+            toast.success("Expense added 🎯");
             setInputVal("");
             setAmountVal("");
             setCategory("transport");
-        } catch (error) {
-            toast.error("Error adding expense. Try again.");
-            console.error(error);
+        } catch (err) {
+            toast.error("Failed to add expense");
+            console.error(err);
         }
     };
 

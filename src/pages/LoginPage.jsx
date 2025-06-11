@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { LoginWithEmail, auth } from "../firebase";
+import { LoginWithEmail } from "../firebase/auth";
+import { auth } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -31,7 +32,7 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await LoginWithEmail(email, password);
-            navigate('/main');
+            navigate('/dashboard');
         } catch (error) {
             let displayMessage = "Login failed. Please check your credentials.";
             switch (error.code) {

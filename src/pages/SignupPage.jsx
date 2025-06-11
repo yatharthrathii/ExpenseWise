@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SignUpWithEmail } from "../firebase";
+import { SignUpWithEmail } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
