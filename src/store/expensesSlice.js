@@ -10,11 +10,14 @@ const expensesSlice = createSlice({
   name: "expenses",
   initialState,
   reducers: {
-    setExpenses(state, action) {
+    setExpensesList(state, action) {
       state.expenses = action.payload;
       const total = action.payload.reduce((sum, exp) => sum + exp.amount, 0);
       state.totalAmount = total;
       state.isPremium = total > 10000;
+    },
+    setIsPremium(state, action) {
+      state.isPremium = action.payload;
     },
     addExpense(state, action) {
       state.expenses.push(action.payload);
@@ -33,5 +36,11 @@ const expensesSlice = createSlice({
   },
 });
 
-export const { setExpenses, addExpense, deleteExpense } = expensesSlice.actions;
+export const {
+  setExpensesList,
+  setIsPremium,
+  addExpense,
+  deleteExpense
+} = expensesSlice.actions;
+
 export default expensesSlice.reducer;

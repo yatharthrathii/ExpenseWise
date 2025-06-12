@@ -9,24 +9,29 @@ import CompleteProfile from './pages/CompleteProfile'
 import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import Dashboard from './pages/Dashboard'
 import Expenses from './pages/Expenses'
+import { useSelector } from "react-redux";
 
 function App() {
 
+  const isDark = useSelector((state) => state.theme.isDarkMode);
+
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/expenses' element={<Expenses />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/complete-profile" element={<CompleteProfile />} />
-        </Routes>
-      </Router>
+      <div className={isDark ? "dark" : ""}>
+        <ToastContainer position="top-right" autoClose={3000} />
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/expenses' element={<Expenses />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+          </Routes>
+        </Router>
+      </div>
     </>
   )
 }

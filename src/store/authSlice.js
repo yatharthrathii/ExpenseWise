@@ -4,6 +4,8 @@ const initialState = {
   isAuthenticated: false,
   token: null,
   userId: null,
+  isLoggedIn: false,
+  isPremium: false,
 };
 
 const authSlice = createSlice({
@@ -20,8 +22,11 @@ const authSlice = createSlice({
       state.token = null;
       state.userId = null;
     },
+    unlockPremium: (state) => {
+      state.isPremium = true;
+    }
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, unlockPremium } = authSlice.actions;
 export default authSlice.reducer;
