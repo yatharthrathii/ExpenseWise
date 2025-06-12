@@ -10,6 +10,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage"
 import Dashboard from './pages/Dashboard'
 import Expenses from './pages/Expenses'
 import { useSelector } from "react-redux";
+import Footer from './components/Footer';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
           </Routes>
+          <Footer />
         </Router>
       </div>
     </>

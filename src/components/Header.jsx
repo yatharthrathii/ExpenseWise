@@ -79,9 +79,11 @@ const Header = () => {
                     <button onClick={() => handleProtectedNavigation('/expenses')} className="hover:text-indigo-200 font-medium">
                         My Expenses
                     </button>
-                    <button onClick={() => handleProtectedNavigation('/complete-profile')} className="hover:text-indigo-200 font-medium">
-                        Profile
-                    </button>
+                    {currentUser && (
+                        <button onClick={() => handleProtectedNavigation('/complete-profile')} className="hover:text-indigo-200 font-medium">
+                            Profile
+                        </button>
+                    )}
 
                     {isPremium && (
                         <>
@@ -133,9 +135,12 @@ const Header = () => {
                     <button onClick={() => handleProtectedNavigation('/expenses')} className="block w-full text-center text-white font-medium">
                         My Expenses
                     </button>
-                    <button onClick={() => handleProtectedNavigation('/complete-profile')} className="block w-full text-center text-white font-medium">
-                        Profile
-                    </button>
+                    {currentUser && (
+                        <button onClick={() => handleProtectedNavigation('/complete-profile')} className="block w-full text-center text-white font-medium">
+                            Profile
+                        </button>
+                    )}
+
                     {isPremium && (
                         <>
                             <button onClick={handleDownload} className="block w-full text-center bg-white text-violet-700 px-4 py-2 rounded-xl shadow hover:bg-indigo-100 transition">
