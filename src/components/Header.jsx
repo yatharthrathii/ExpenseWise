@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { auth } from "../firebase/firebase";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { toast } from "react-toastify";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,13 +31,13 @@ const Header = () => {
             navigate('/login');
         } catch (error) {
             console.error('Error logging out:', error.message);
-            alert('Failed to log out. Please try again.');
+            toast.error("Failed to log out. Please try again.")
         }
     };
 
     const handleProtectedNavigation = (path) => {
         if (!currentUser) {
-            alert("Please log in to access this page.");
+            toast.error("Please log in to access this page.")
             navigate('/login');
         } else {
             navigate(path);
@@ -49,7 +50,7 @@ const Header = () => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Logo/Title */}
                 <div className="flex items-center">
-                    <span className="text-xl md:text-2xl font-extrabold tracking-tight cursor-pointer" onClick={() => navigate('/')}>
+                    <span className="text-xl md:text-2xl font-extrabold tracking-tight cursor-pointer">
                         💸 ExpenseWise
                     </span>
                 </div>
