@@ -1,27 +1,29 @@
-import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoginPage from "./pages/LoginPage"
-import SignupPage from "./pages/SignupPage"
-import Header from './components/Header'
-import CompleteProfile from './pages/CompleteProfile'
-import ForgotPasswordPage from "./pages/ForgotPasswordPage"
-import Dashboard from './pages/Dashboard'
-import Expenses from './pages/Expenses'
-import { useSelector } from "react-redux";
+import Header from './components/Header';
 import Footer from './components/Footer';
+import { useSelector } from "react-redux";
+import { lazy, Suspense } from 'react';
+
+
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const CompleteProfile = lazy(() => import("./pages/CompleteProfile"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Expenses = lazy(() => import("./pages/Expenses"));
 
 function App() {
-
   const isDark = useSelector((state) => state.theme.isDarkMode);
 
   return (
-    <>
-      <div className={isDark ? "dark" : ""}>
-        <ToastContainer position="top-right" autoClose={3000} />
-        <Router>
-          <Header />
+    <div className={isDark ? "dark" : ""}>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Router>
+        <Header />
+        <Suspense fallback={<div className="loader">Loading...</div>}>
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path='/dashboard' element={<Dashboard />} />
@@ -31,11 +33,11 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
           </Routes>
-          <Footer />
-        </Router>
-      </div>
-    </>
-  )
+        </Suspense>
+        <Footer />
+      </Router>
+    </div>
+  );
 }
 
-export default App
+export default App;
