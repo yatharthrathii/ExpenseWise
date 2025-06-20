@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("yatharthmaheshwari01@gmail.com");
-    const [password, setPassword] = useState("123456789");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -54,11 +54,28 @@ const LoginPage = () => {
         } finally {
             setLoading(false);
         }
+    };
 
+    const handleGuestLogin = async () => {
+        setErrorMessage("");
+        setLoading(true);
+
+        const guestEmail = "yatharthmaheshwari01@gmail.com";
+        const guestPassword = "123456789";
+
+        try {
+            await LoginWithEmail(guestEmail, guestPassword);
+            navigate("/dashboard");
+        } catch (error) {
+            setErrorMessage("Guest login failed. Try again later.");
+            console.error("Guest login error:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-indigo-100  px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-indigo-100 px-4">
             <div className="w-full max-w-md bg-white shadow-xl rounded-3xl p-8 border border-slate-200">
                 <h1 className="text-3xl font-semibold text-center text-slate-800 mb-6">
                     Welcome Back 👋
@@ -93,6 +110,16 @@ const LoginPage = () => {
                         disabled={loading}
                     >
                         {loading ? 'Logging in...' : 'Login'}
+                    </button>
+
+                    {/* 🚀 Continue as Guest Button */}
+                    <button
+                        type="button"
+                        className="w-full bg-slate-200 text-slate-700 font-medium py-2 rounded-xl transition-all duration-200 hover:bg-slate-300"
+                        onClick={handleGuestLogin}
+                        disabled={loading}
+                    >
+                        {loading ? 'Logging in...' : 'Continue as Guest'}
                     </button>
 
                     {/* 👉 Forgot Password Button */}
