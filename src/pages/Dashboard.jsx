@@ -1,104 +1,34 @@
-import { useState } from "react";
-import { addExpense } from "../firebase/expenses";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "../components/HeroSection";
 
 const Dashboard = () => {
-    const [inputVal, setInputVal] = useState("");
-    const [amountVal, setAmountVal] = useState("");
-    const [category, setCategory] = useState("transport");
+    const navigate = useNavigate();
 
-    const handleFormSubmit = async (e) => {
-        e.preventDefault();
-        if (!inputVal.trim() || !amountVal.trim()) {
-            toast.error("Please fill all fields!");
-            return;
-        }
-
-        const expenseData = {
-            title: inputVal,
-            amount: Number(amountVal),
-            category,
-        };
-
-        try {
-            await addExpense(expenseData);
-            toast.success("Expense added 🎯");
-            setInputVal("");
-            setAmountVal("");
-            setCategory("transport");
-        } catch (err) {
-            toast.error("Failed to add expense");
-            console.error(err);
-        }
+    const handleGetStarted = () => {
+        navigate("/expenses");
     };
 
     return (
-        <div className="bg-gradient-to-br from-violet-50 to-indigo-100">
-            <div className="pt-40 min-h-screen  p-4">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    <div className="md:col-span-2 flex items-center h-full">
-                        <div className="p-6">
-                            <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-700 leading-tight">
-                                Welcome to <span className="text-violet-600">expenseWish</span> 🎯
-                            </h1>
-                            <p className="text-gray-700 text-lg md:text-xl mt-4">
-                                Track your daily expenses and take control of your finances. <br />
-                                Stay consistent, stay smart.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-2xl shadow-md p-6 border border-indigo-100 sticky top-32 h-fit">
-                        <h2 className="text-xl font-bold text-indigo-700 text-center mb-4">➕ Add New Expense</h2>
-                        <form onSubmit={handleFormSubmit} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-indigo-800 mb-1">Title</label>
-                                <input
-                                    type="text"
-                                    value={inputVal}
-                                    onChange={(e) => setInputVal(e.target.value)}
-                                    placeholder="e.g. Uber ride"
-                                    className="w-full px-4 py-2 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-indigo-800 mb-1">Amount</label>
-                                <input
-                                    type="number"
-                                    value={amountVal}
-                                    onChange={(e) => setAmountVal(e.target.value)}
-                                    placeholder="e.g. 250"
-                                    className="w-full px-4 py-2 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-indigo-800 mb-1">Category</label>
-                                <select
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
-                                    className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                >
-                                    <option value="transport">Transport</option>
-                                    <option value="shopping">Shopping</option>
-                                    <option value="bills">Bills</option>
-                                    <option value="food">Food</option>
-                                    <option value="miscellaneous">Miscellaneous</option>
-                                </select>
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full bg-gradient-to-r from-violet-600 to-indigo-700 hover:from-violet-700 hover:to-indigo-800 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
-                            >
-                                Add Expense
-                            </button>
-                        </form>
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-violet-50 to-indigo-100 flex flex-col overflow-x-hidden">
+            <div className="flex flex-col justify-center items-center text-center px-4 pt-40 sm:px-6 py-20 flex-grow w-full">
+                <div className="w-full max-w-3xl">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-indigo-700 leading-tight break-words">
+                        Welcome to <span className="text-violet-600">expenseWish 🎯</span>
+                    </h1>
+                    <p className="text-gray-700 text-base sm:text-lg md:text-xl mt-4">
+                        Track your daily expenses and take control of your finances.
+                        <br />
+                        Stay consistent, stay smart.
+                    </p>
+                    <button
+                        onClick={handleGetStarted}
+                        className="mt-8 bg-gradient-to-r from-violet-600 to-indigo-700 hover:from-violet-700 hover:to-indigo-800 text-white font-semibold py-3 px-8 rounded-full transition duration-300 text-lg"
+                    >
+                        Get Started
+                    </button>
                 </div>
             </div>
+
             <HeroSection />
         </div>
     );

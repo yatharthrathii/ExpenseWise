@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { LoginWithEmail } from "../firebase/auth";
-import { auth } from "../firebase/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -10,47 +10,39 @@ const LoginPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const token = useSelector((state) => state.auth.token);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                navigate('/');
-            }
-        });
-        return () => unsubscribe();
-    }, [navigate]);
+        if (token) {
+            navigate("/");
+        }
+    }, [token, navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorMessage("");
-
         if (!email || !password) {
             setErrorMessage("Please enter both email and password.");
             return;
         }
-
         setLoading(true);
         try {
-            await LoginWithEmail(email, password);
-            navigate('/dashboard');
+            const res = await LoginWithEmail(email, password);
+            if (res.idToken) {
+                dispatch(login({ token: res.idToken, userId: res.localId }));
+                navigate("/dashboard");
+            } else {
+                throw new Error(res.error.message);
+            }
         } catch (error) {
             let displayMessage = "Login failed. Please check your credentials.";
-            switch (error.code) {
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                    displayMessage = "Invalid email or password.";
-                    break;
-                case 'auth/invalid-email':
-                    displayMessage = "Invalid email address format.";
-                    break;
-                case 'auth/too-many-requests':
-                    displayMessage = "Too many failed login attempts. Please try again later.";
-                    break;
-                default:
-                    displayMessage = error.message || displayMessage;
+            if (error.message.includes("INVALID_PASSWORD") || error.message.includes("EMAIL_NOT_FOUND")) {
+                displayMessage = "Invalid email or password.";
+            } else if (error.message.includes("INVALID_EMAIL")) {
+                displayMessage = "Invalid email address format.";
             }
             setErrorMessage(displayMessage);
-            console.error("Login error:", error);
         } finally {
             setLoading(false);
         }
@@ -59,16 +51,19 @@ const LoginPage = () => {
     const handleGuestLogin = async () => {
         setErrorMessage("");
         setLoading(true);
-
         const guestEmail = "yatharthmaheshwari01@gmail.com";
         const guestPassword = "123456789";
-
         try {
-            await LoginWithEmail(guestEmail, guestPassword);
-            navigate("/dashboard");
+            const res = await LoginWithEmail(guestEmail, guestPassword);
+            if (res.idToken) {
+                dispatch(login({ token: res.idToken, userId: res.localId }));
+                navigate("/dashboard");
+            } else {
+                throw new Error(res.error.message);
+            }
         } catch (error) {
             setErrorMessage("Guest login failed. Try again later.");
-            console.error("Guest login error:", error);
+            console.log(error)
         } finally {
             setLoading(false);
         }
@@ -112,7 +107,6 @@ const LoginPage = () => {
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
 
-                    {/* 🚀 Continue as Guest Button */}
                     <button
                         type="button"
                         className="w-full bg-slate-200 text-slate-700 font-medium py-2 rounded-xl transition-all duration-200 hover:bg-slate-300"
@@ -122,7 +116,6 @@ const LoginPage = () => {
                         {loading ? 'Logging in...' : 'Continue as Guest'}
                     </button>
 
-                    {/* 👉 Forgot Password Button */}
                     <div className="text-center">
                         <button
                             type="button"

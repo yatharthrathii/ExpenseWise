@@ -1,31 +1,78 @@
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    updateProfile,
-    sendEmailVerification,
-    sendPasswordResetEmail,
-} from "firebase/auth";
-import { auth } from "./firebase";
+const API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
 
 export const SignUpWithEmail = async (email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCredential.user);
-    return userCredential.user;
+    const res = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, returnSecureToken: true }),
+        }
+    );
+    return res.json();
 };
 
 export const LoginWithEmail = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    const res = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, returnSecureToken: true }),
+        }
+    );
+    return res.json();
 };
 
-export const Logout = () => signOut(auth);
+export const sendPasswordReset = async (email) => {
+    const res = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                requestType: "PASSWORD_RESET",
+                email,
+            }),
+        }
+    );
+    return res.json();
+};
 
-export const UpdateUserProfile = (user, displayName, photoURL) =>
-    updateProfile(user, { displayName, photoURL });
+export const updateUserProfile = async (idToken, displayName, photoUrl) => {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken, displayName, photoUrl, returnSecureToken: true }),
+    });
+    return res.json();
+};
 
-export const sendVerificationEmailToUser = (user) =>
-    sendEmailVerification(user);
+export const sendVerificationEmail = async (idToken) => {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestType: "VERIFY_EMAIL", idToken }),
+    });
+    return res.json();
+};
 
-export const sendPasswordReset = (email) =>
-    sendPasswordResetEmail(auth, email);
+export const getUserDetails = async (idToken) => {
+    const res = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${API_KEY}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+        }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        console.log("User details fetch failed:", data);
+        throw new Error(data.error?.message || "Something went wrong");
+    }
+
+    return data;
+};

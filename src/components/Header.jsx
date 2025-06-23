@@ -1,48 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { auth } from "../firebase/firebase";
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { logout } from '../store/authSlice';
 import ThemeToggle from "../store/ThemeToggle";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
+
+    const token = useSelector((state) => state.auth.token);
     const isPremium = useSelector((state) => state.auth.isPremium);
     const expenses = useSelector((state) => state.expenses.expenses);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setLoading(false);
-
-            const publicPaths = ['/login', '/signup', '/', '/forgot-password'];
-            if (!user && !publicPaths.includes(location.pathname)) {
-                navigate('/login');
-            }
-        });
-        return () => unsubscribe();
-    }, [location.pathname, navigate]);
-
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
+        const publicPaths = ['/login', '/signup', '/', '/forgot-password'];
+        if (!token && !publicPaths.includes(location.pathname)) {
             navigate('/login');
-        } catch (error) {
-            console.error('Error logging out:', error.message);
-            toast.error("Failed to log out. Please try again.")
         }
+    }, [location.pathname, token, navigate]);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/login');
     };
 
     const handleDownload = () => {
         const csvHeader = "Title,Amount,Category,Timestamp\n";
-        const csvRows = Object.values(expenses)
-            .map((exp) => `${exp.title},${exp.amount},${exp.category},${exp.timestamp}`)
-            .join("\n");
+        const csvRows = expenses.map(
+            (exp) => `${exp.title},${exp.amount},${exp.category},${exp.timestamp}`
+        ).join("\n");
 
         const blob = new Blob([csvHeader + csvRows], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
@@ -53,8 +42,8 @@ const Header = () => {
     };
 
     const handleProtectedNavigation = (path) => {
-        if (!currentUser) {
-            toast.error("Please log in to access this page.")
+        if (!token) {
+            toast.error("Please log in to access this page.");
             navigate('/login');
         } else {
             navigate(path);
@@ -79,7 +68,7 @@ const Header = () => {
                     <button onClick={() => handleProtectedNavigation('/expenses')} className="hover:text-indigo-200 font-medium">
                         My Expenses
                     </button>
-                    {currentUser && (
+                    {token && (
                         <button onClick={() => handleProtectedNavigation('/complete-profile')} className="hover:text-indigo-200 font-medium">
                             Profile
                         </button>
@@ -93,20 +82,14 @@ const Header = () => {
                             >
                                 📁 Download CSV
                             </button>
-                            <div >
-                                <ThemeToggle />
-                            </div>
+                            <ThemeToggle />
                         </>
                     )}
 
-                    {loading ? (
-                        <span className="text-indigo-200">Loading...</span>
-                    ) : currentUser ? (
-                        <>
-                            <button onClick={handleLogout} className="bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100 transition">
-                                Logout
-                            </button>
-                        </>
+                    {token ? (
+                        <button onClick={handleLogout} className="bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100 transition">
+                            Logout
+                        </button>
                     ) : (
                         <button onClick={() => navigate('/login')} className="bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100">
                             Login
@@ -135,12 +118,11 @@ const Header = () => {
                     <button onClick={() => handleProtectedNavigation('/expenses')} className="block w-full text-center text-white font-medium">
                         My Expenses
                     </button>
-                    {currentUser && (
+                    {token && (
                         <button onClick={() => handleProtectedNavigation('/complete-profile')} className="block w-full text-center text-white font-medium">
                             Profile
                         </button>
                     )}
-
                     {isPremium && (
                         <>
                             <button onClick={handleDownload} className="block w-full text-center bg-white text-violet-700 px-4 py-2 rounded-xl shadow hover:bg-indigo-100 transition">
@@ -151,14 +133,10 @@ const Header = () => {
                             </div>
                         </>
                     )}
-                    {loading ? (
-                        <span className="text-indigo-200">Loading...</span>
-                    ) : currentUser ? (
-                        <>
-                            <button onClick={handleLogout} className="block w-full text-center bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100 transition">
-                                Logout
-                            </button>
-                        </>
+                    {token ? (
+                        <button onClick={handleLogout} className="block w-full text-center bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100 transition">
+                            Logout
+                        </button>
                     ) : (
                         <button onClick={() => navigate('/login')} className="block w-full text-center bg-white text-violet-700 px-5 py-2 rounded-xl font-semibold hover:bg-indigo-100">
                             Login

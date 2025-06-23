@@ -6,6 +6,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { useSelector } from "react-redux";
 import { lazy, Suspense } from 'react';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -25,13 +27,16 @@ function App() {
         <Header />
         <Suspense fallback={<div className="loader">Loading...</div>}>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/expenses' element={<Expenses />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/complete-profile" element={<CompleteProfile />} />
+            {/* Public Routes */}
+            <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
+            <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
+
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
+            <Route path="/complete-profile" element={<ProtectedRoute><CompleteProfile /></ProtectedRoute>} />
           </Routes>
         </Suspense>
         <Footer />

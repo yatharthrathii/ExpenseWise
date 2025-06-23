@@ -13,34 +13,21 @@ const ForgotPasswordPage = () => {
         e.preventDefault();
         setMessage("");
         setError("");
-
         if (!email) {
             setError("Please enter your email address.");
             return;
         }
-
         setLoading(true);
         try {
-            await sendPasswordReset(email);
-            setMessage("A password reset link has been sent to your email address. Please check your inbox and spam folder.");
-            setEmail("");
-        } catch (err) {
-            let errorMessage = "Failed to send password reset email. Please try again.";
-            switch (err.code) {
-                case 'auth/invalid-email':
-                    errorMessage = "The email address is not valid.";
-                    break;
-                case 'auth/user-not-found':
-                    errorMessage = "No user found with this email. Please check the email address.";
-                    break;
-                case 'auth/too-many-requests':
-                    errorMessage = "Too many requests. Please try again after some time.";
-                    break;
-                default:
-                    errorMessage = err.message || errorMessage;
+            const res = await sendPasswordReset(email);
+            if (res.email) {
+                setMessage("A password reset link has been sent to your email address.");
+                setEmail("");
+            } else {
+                throw new Error(res.error.message);
             }
-            setError(errorMessage);
-            console.error("Password reset error:", err);
+        } catch (err) {
+            setError("Failed to send password reset. " + err.message);
         } finally {
             setLoading(false);
         }

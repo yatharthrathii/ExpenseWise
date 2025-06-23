@@ -1,34 +1,40 @@
 import { useState } from "react";
 import { SignUpWithEmail } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice";
 
 const SignupPage = () => {
     const [inputVal, setInputVal] = useState("");
     const [passwordVal, setPasswordVal] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleFormSignUp = async (e) => {
         e.preventDefault();
         setErrorMessage("");
-
         if (!inputVal || !passwordVal || !confirmPassword) {
             setErrorMessage("Please fill in all the fields.");
             return;
         }
-
         if (passwordVal !== confirmPassword) {
             setErrorMessage("Passwords do not match.");
             return;
         }
-
-        await SignUpWithEmail(inputVal, passwordVal);
-        navigate("/")
-
-        setInputVal("");
-        setPasswordVal("");
-        setConfirmPassword("");
+        try {
+            const res = await SignUpWithEmail(inputVal, passwordVal);
+            if (res.idToken) {
+                dispatch(login({ token: res.idToken, userId: res.localId }));
+                navigate("/");
+            } else {
+                throw new Error(res.error.message);
+            }
+        } catch (err) {
+            setErrorMessage("Signup failed. " + err.message);
+            console.log(err)
+        }
     };
 
     return (

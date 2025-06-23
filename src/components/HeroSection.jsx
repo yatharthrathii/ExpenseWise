@@ -27,22 +27,13 @@ const HeroSection = () => {
                         desc="Smart suggestions, category detection and expense tips powered by AI."
                     />
                     <FeatureCard
-                        title="🌗 Theme Toggle"
+                        title="🌗 Theme Toggle (Coming Soon)"
                         desc="Switch between light and dark themes as per your comfort."
                     />
                     <FeatureCard
                         title="📊 Progress Graph (Coming Soon)"
                         desc="Visualize your monthly spend trend and categories in graph view."
                     />
-                </div>
-
-                <div className="mt-12">
-                    <a
-                        href="/dashboard"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300 shadow-md"
-                    >
-                        Get Started
-                    </a>
                 </div>
             </div>
         </section>
