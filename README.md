@@ -7,7 +7,7 @@ It helps you log and manage your daily expenses securely with a clean UI and pow
 
 ## 🚀 Live Preview
 
-[Click Here to View Live App](https://expense-wise-drab.vercel.app)
+[Click Here to View Live App](https://expense-wise-three.vercel.app)
 
 ---
 
